@@ -16,9 +16,11 @@ module.exports = {
       this._ended = true;
       this._data = data;
     }.bind(this);
+
   },
 
   request: function(url, method, postdata) {
+    console.log('method', method);
     this.url = url;
     this.method = method;
     this._postData = postdata;

@@ -53,6 +53,16 @@ this file and include it in basic-server.js so that it actually works.
 //   data: 'A Whole New World!'
 // }));
 
+let messages = [];
+
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept, authorization',
+  'access-control-max-age': 10, // Seconds.
+  'allow': 'GET, POST, PUT, DELETE, OPTIONS'
+};
+
 var requestHandler = function(request, response) {
 
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
@@ -63,26 +73,41 @@ var requestHandler = function(request, response) {
 
   // determine status code:
   if (request.url === '/classes/messages') {
-    // 2** land
     if (request.method === 'GET') {
       statusCode = 200;
 
       response.writeHead(statusCode, headers);
-      response.end(JSON.stringify([{data: 'Hello World'}]));
+      response.end(JSON.stringify(messages));
 
     } else if (request.method === 'POST') {
       statusCode = 201;
 
-      let body = [];
       request.on('data', (chunk) => {
-        body.push(chunk);
+        messages.push(JSON.parse(chunk)); // convert back to object
+
       }).on('end', () => {
-        body = Buffer.concat(body).toString();
+        response.writeHead(statusCode, headers);
+        response.end();
       });
 
+
+    } else if (request.method === 'DELETE') {
+      console.log('here in delete');
+      //request.postdata.username
+      //request.on()
+      console.log(request._postData);
+      messages = messages.filter(message => message.username !== request._postData.username);
+
+      statusCode = 204; // not found
       response.writeHead(statusCode, headers);
-      response.end(JSON.stringify(body));
+      response.end();
+
+      // delete is accessing an endpoint
     }
+
+  } else {
+    response.writeHead(404, headers);
+    response.end();
   }
 
   // headers['Content-Type'] = 'application/json';
@@ -100,11 +125,6 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept, authorization',
-  'access-control-max-age': 10 // Seconds.
-};
+
 
 module.exports.requestHandler = requestHandler;
