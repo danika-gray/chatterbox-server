@@ -68,7 +68,7 @@ var requestHandler = function(request, response) {
       statusCode = 200;
 
       response.writeHead(statusCode, headers);
-      response.end();
+      response.end(JSON.stringify([{data: 'Hello World'}]));
 
     } else if (request.method === 'POST') {
       statusCode = 201;
