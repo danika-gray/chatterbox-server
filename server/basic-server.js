@@ -1,6 +1,6 @@
 /* Import node's http module: */
 var http = require('http');
-
+var handleRequest = require('/Users/hgdf/Documents/hackreactorW3/rfp2204-chatterbox-server/server/request-handler.js');
 
 // Every server needs to listen on a port with a unique number. The
 // standard port for HTTP servers is port 80, but that port is
@@ -22,9 +22,25 @@ var ip = '127.0.0.1';
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
-var server = http.createServer(handleRequest);
+var server = http.createServer(handleRequest.requestHandler);
 console.log('Listening on http://' + ip + ':' + port);
 server.listen(port, ip);
+
+// Create a local server to receive data from
+// const server = http.createServer((req, res) => {
+//   res.writeHead(200, { 'Content-Type': 'application/json' });
+//   res.end(JSON.stringify({
+//     data: 'Hello New World!'
+//   }));
+// });
+
+// server.listen('3000', '127.0.0.1');
+
+
+// var req = {
+//   method: 'GET',
+//   url: '/classes/messages'
+// };
 
 // To start this server, run:
 //
